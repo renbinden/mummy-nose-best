@@ -21,8 +21,12 @@ public class Player {
 
     public void render(float delta, SpriteBatch spriteBatch) {
         cursor.moveTo(cursor.x, (board.highestBottomRow - 1) * 64);
-        if (abs(controller.getAxis(0)) >= 0.2F)
-            cursor.move(controller.getAxis(0) * delta * 64, 0);
+        if (abs(controller.getAxis(0)) >= 0.2F) {
+            cursor.move(controller.getAxis(0) * delta * 128, 0);
+        }
+        if (controller.getButton(0)) {
+            board.swapBlocks((int) (cursor.x + 32) / 64, (int) (cursor.y - 32) / 64, board.lowestTopRow);
+        }
         cursor.render(delta, spriteBatch);
     }
 
