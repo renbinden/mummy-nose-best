@@ -50,41 +50,45 @@ public class MainScreen extends ScreenAdapter {
 
         eventsTimer = new java.util.Timer();
         eventsTimer.scheduleAtFixedRate(task, 10000, 10000);
-        //task.run();
     }
 
     public void tileClickListener(int x, int y) {
-
+        // Reverse y as it is from the bottom.
+        int reverseY = 9 - y;
         // Make sure we're on the board.
-        if(x>=this.gameBoard.getWidth() || y>this.gameBoard.getHeight()) {
+        if (x >= this.gameBoard.getWidth() || reverseY > this.gameBoard.getHeight()) {
             return;
         }
 
-        int tileNumber = this.gameBoard.getTile(x,y);
+        int tileNumber = this.gameBoard.getTile(x, reverseY);
 
-        if(tileNumber>0) {
-            int swapDirection = (y > 5)?-1:1;
+        if (tileNumber > 0) {
+            int swapDirection = (reverseY > 5) ? -1 : 1;
 
-            if(swapDirection == 1) {
+            if (swapDirection == 1) {
 
-                for (int py = y + 1; py < 10; py++) {
+                for (int py = reverseY + 1; py < 10; py++) {
                     int foundTileValue = this.gameBoard.getTile(x, py);
 
                     if (foundTileValue > 0) {
                         if (py > 5) {
-                            this.gameBoard.swapBlocks(x, y, py);
+                            this.gameBoard.swapBlocks(x, reverseY, py);
                         }
+                        // Get out of the loop as we've either done a swap or rejected the swap
+                        break;
                     }
                 }
             } else {
 
-                for (int py = y-1; py >= 0; py--) {
+                for (int py = reverseY - 1; py >= 0; py--) {
                     int foundTileValue = this.gameBoard.getTile(x, py);
 
                     if (foundTileValue > 0) {
                         if (py < 5) {
-                            this.gameBoard.swapBlocks(x, y, py);
+                            this.gameBoard.swapBlocks(x, reverseY, py);
                         }
+                        // Get out of the loop as we've either done a swap or rejected the swap
+                        break;
                     }
                 }
             }
