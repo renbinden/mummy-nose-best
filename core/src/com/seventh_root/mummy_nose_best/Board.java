@@ -195,7 +195,7 @@ public class Board {
         if (!lost) {
             offset += delta * 4;
             for (int x = 0; x < getWidth(); x++) {
-                if (getHighestBottomTileYAt(x) == getLowestTopTileYAt(x) && offset >= 64) {
+                if (getHighestBottomTileYAt(x) == 4 && getLowestTopTileYAt(x) == 5 && offset >= 64) {
                     lost = true;
                     lostSound.play();
                 }
@@ -225,7 +225,7 @@ public class Board {
     }
 
     public int getHighestBottomTileYAt(int x) {
-        int y = 6;
+        int y = 4;
         while (getTile(x, y) == 0 && y > 0) {
             y--;
         }
@@ -242,7 +242,7 @@ public class Board {
 
 
     public void rotateBlocks(int x, boolean topBlocks) {
-        int[] piecesList = new int[this.height/2];
+        int[] piecesList = new int[(this.height / 2) + 1];
 
         if(topBlocks) {
             for (int y = 0; y < this.height / 2; y++) {
