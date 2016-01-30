@@ -172,8 +172,8 @@ public class Board {
         int lowestTopTileY = getLowestTopTileYAt(x);
         int source = getTile(x, highestBottomTileY);
         int target = getTile(x, lowestTopTileY);
-        setTile(x, highestBottomTileY, source);
-        setTile(x, lowestTopTileY, target);
+        setTile(x, lowestTopTileY, source);
+        setTile(x, highestBottomTileY, target);
         checkBoard();
         compressBoard();
     }
