@@ -145,4 +145,42 @@ public class Board {
         this.setTile(x,y, targetTileValue);
         this.setTile(x,py, sourceTileValue);
     }
+
+    public void rotateBlocks(int x, boolean topBlocks) {
+        int[] piecesList = new int[this.height/2];
+
+        if(topBlocks) {
+            for (int y = 0; y < this.height / 2; y++) {
+                int thisTileValue = this.getTile(x, y);
+                int nextTileValue = this.getTile(x, y + 1);
+                if (thisTileValue != 0) {
+                    if (nextTileValue == 0) {
+                        piecesList[0] = thisTileValue;
+                    } else {
+                        piecesList[y + 1] = thisTileValue;
+                    }
+                }
+            }
+            // put the tiles in the correct location
+            for (int y = 0; y < this.height / 2; y++) {
+                this.setTile(x, y, piecesList[y]);
+            }
+        } else {
+            for (int y = this.height-1; y > this.height / 2; y--) {
+                int thisTileValue = this.getTile(x, y);
+                int nextTileValue = this.getTile(x, y - 1);
+                if (thisTileValue != 0) {
+                    if (nextTileValue == 0) {
+                        piecesList[piecesList.length-1] = thisTileValue;
+                    } else {
+                        piecesList[y - 1 - (this.height / 2)] = thisTileValue;
+                    }
+                }
+            }
+            // put the tiles in the correct location
+            for (int y = this.height-1; y > this.height / 2; y--) {
+                this.setTile(x, y, piecesList[y - (this.height / 2)]);
+            }
+        }
+    }
 }

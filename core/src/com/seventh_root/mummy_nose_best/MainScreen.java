@@ -23,6 +23,7 @@ public class MainScreen extends ScreenAdapter {
         playerManager = new PlayerManager();
         gameBoard = new Board(6,10);
         gameBoard.create();
+        compressBoard();
 
         texture = new Texture("tools.png");
 
@@ -42,16 +43,20 @@ public class MainScreen extends ScreenAdapter {
             {
                 gameBoard.addAdditionalRows();
 
-                boolean madeCompression = false;
-                do {
-                    gameBoard.checkBoard();
-                    madeCompression = gameBoard.compressBoard();
-                }while(madeCompression);
+                compressBoard();
             }
         };
 
         eventsTimer = new java.util.Timer();
-        eventsTimer.scheduleAtFixedRate(task, 10000, 10000);
+        eventsTimer.scheduleAtFixedRate(task, 0, 20000);
+    }
+
+    public void compressBoard() {
+        boolean madeCompression = false;
+        do {
+            gameBoard.checkBoard();
+            madeCompression = gameBoard.compressBoard();
+        }while(madeCompression);
     }
 
     public void tileClickListener(int x, int y) {
@@ -76,6 +81,11 @@ public class MainScreen extends ScreenAdapter {
                         if (py > 5) {
                             this.gameBoard.swapBlocks(x, reverseY, py);
                         }
+                        else {
+                            // we aren't on the bottom so rotate the blocks around
+                            this.gameBoard.rotateBlocks(x,true);
+                        }
+
                         // Get out of the loop as we've either done a swap or rejected the swap
                         break;
                     }
@@ -89,13 +99,17 @@ public class MainScreen extends ScreenAdapter {
                         if (py < 5) {
                             this.gameBoard.swapBlocks(x, reverseY, py);
                         }
+                        else {
+                            // we aren't on the bottom so rotate the blocks around
+                            this.gameBoard.rotateBlocks(x,false);
+                        }
                         // Get out of the loop as we've either done a swap or rejected the swap
                         break;
                     }
                 }
             }
 
-            this.gameBoard.checkBoard();
+            compressBoard();
         }
     }
 
