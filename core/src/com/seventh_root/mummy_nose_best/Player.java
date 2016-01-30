@@ -1,7 +1,9 @@
 package com.seventh_root.mummy_nose_best;
 
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static java.lang.Math.abs;
 
@@ -21,19 +23,27 @@ public class Player {
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
-        cursor.moveTo(cursor.x, (board.highestBottomRow - 1) * 64);
+        cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
         if (abs(controller.getAxis(0)) >= 0.2F) {
             cursor.move(controller.getAxis(0) * delta * 128, 0);
         }
         if (controller.getButton(0)) {
             if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
-                board.swapBlocks((int) (cursor.x + 32) / 64, (int) (cursor.y - 32) / 64, board.lowestTopRow);
+                board.swapTopRow(((int) cursor.x + 32) / 64);
                 actionProcessed = true;
             }
         } else {
             actionProcessed = false;
         }
         cursor.render(delta, spriteBatch);
+    }
+
+    public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(Color.RED);
+        int highestBottomTileY = board.getHighestBottomTileYAt((int) cursor.x / 64);
+        int lowestTopTileY = board.getLowestTopTileYAt((int) cursor.x / 64);
+        shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
+        shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
     }
 
     public void dispose() {
