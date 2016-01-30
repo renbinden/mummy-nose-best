@@ -25,11 +25,9 @@ public class MainScreen extends ScreenAdapter {
     }
 
     public void compressBoard() {
-        boolean madeCompression;
         do {
             gameBoard.checkBoard();
-            madeCompression = gameBoard.compressBoard();
-        }while(madeCompression);
+        } while (gameBoard.compressBoard());
     }
 
     @Override
