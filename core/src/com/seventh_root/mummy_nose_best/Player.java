@@ -14,6 +14,7 @@ public class Player {
     public final Controller controller;
     public final Cursor cursor;
     private boolean actionProcessed; // Whether the swap has been processed.
+    private boolean rotateProcessed; // Same as above, but for rotate
 
     public Player(Board board, int index, Controller controller) {
         this.board = board;
@@ -34,6 +35,14 @@ public class Player {
             }
         } else {
             actionProcessed = false;
+        }
+        if (controller.getButton(2)) {
+            if (!rotateProcessed) {
+                board.rotateBlocks((int) cursor.x / 64, true);
+                rotateProcessed = true;
+            }
+        } else {
+            rotateProcessed = false;
         }
         cursor.render(delta, spriteBatch);
     }

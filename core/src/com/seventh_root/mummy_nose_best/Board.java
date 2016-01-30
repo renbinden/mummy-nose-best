@@ -267,5 +267,7 @@ public class Board {
                 this.setTile(x, y, piecesList[y - (this.height / 2)]);
             }
         }
+        checkBoard();
+        compressBoard();
     }
 }
