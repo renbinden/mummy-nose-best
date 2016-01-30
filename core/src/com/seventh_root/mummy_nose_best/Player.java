@@ -11,6 +11,7 @@ public class Player {
     public final int index;
     public final Controller controller;
     public final Cursor cursor;
+    private boolean actionProcessed; // Whether the swap has been processed.
 
     public Player(Board board, int index, Controller controller) {
         this.board = board;
@@ -25,7 +26,12 @@ public class Player {
             cursor.move(controller.getAxis(0) * delta * 128, 0);
         }
         if (controller.getButton(0)) {
-            board.swapBlocks((int) (cursor.x + 32) / 64, (int) (cursor.y - 32) / 64, board.lowestTopRow);
+            if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
+                board.swapBlocks((int) (cursor.x + 32) / 64, (int) (cursor.y - 32) / 64, board.lowestTopRow);
+                actionProcessed = true;
+            }
+        } else {
+            actionProcessed = false;
         }
         cursor.render(delta, spriteBatch);
     }
