@@ -51,7 +51,7 @@ public class Board {
         int x,y;
         for(x=0;x<this.width; x++)
         {
-            for(y=this.height/2;y<0; y--)
+            for(y=this.height/2;y>0; y--)
             {
                 this.setTile(x, y, this.getTile(x,y-1));
             }
@@ -59,11 +59,16 @@ public class Board {
 
         for(x=0;x<this.width; x++)
         {
-            for(y=this.height/2;y<0; y--)
+            for(y=this.height/2;y<9; y++)
             {
-                this.setTile(x, y, this.getTile(x,y-1));
+                this.setTile(x, y, this.getTile(x,y+1));
             }
         }
+    }
+
+    public void addAdditionalRows() {
+        moveRows();
+        addRows();
     }
 
     public void setTile(int x, int y, int value) {
@@ -89,6 +94,49 @@ public class Board {
                 }
             }
         }
+    }
+
+    public boolean compressBoard() {
+
+        boolean anyTilesMoved = false;
+        boolean compressed = false;
+
+        do {
+            anyTilesMoved = false;
+            for (int y = this.height / 2; y > 0; y--) {
+                for (int x =0; x < this.width; x++) {
+                    int currentTile = this.getTile(x, y);
+
+                    if (currentTile != 0) {
+                        if(this.getTile(x, y-1)==0) {
+                            this.setTile(x, y-1, currentTile);
+                            this.setTile(x, y, 0);
+
+                            anyTilesMoved = true;
+                            compressed = true;
+                        }
+                    }
+                }
+            }
+
+            for (int y = this.height / 2; y < 9; y++) {
+                for (int x = 0; x < this.width; x++) {
+                    int currentTile = this.getTile(x, y);
+
+                    if (currentTile != 0) {
+                        if(this.getTile(x, y+1)==0) {
+                            this.setTile(x, y+1, currentTile);
+                            this.setTile(x, y, 0);
+
+                            anyTilesMoved = true;
+                            compressed = true;
+                        }
+                    }
+                }
+            }
+        } while (anyTilesMoved);
+
+        return compressed;
     }
 
     public void swapBlocks(int x, int y, int py) {
