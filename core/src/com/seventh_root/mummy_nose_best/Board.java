@@ -225,7 +225,7 @@ public class Board {
     }
 
     public int getHighestBottomTileYAt(int x) {
-        int y = 5;
+        int y = 6;
         while (getTile(x, y) == 0 && y > 0) {
             y--;
         }
