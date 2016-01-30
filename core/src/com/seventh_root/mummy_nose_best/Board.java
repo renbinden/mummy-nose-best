@@ -1,20 +1,33 @@
 package com.seventh_root.mummy_nose_best;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+
 import java.security.SecureRandom;
 
 public class Board {
+
     private int height;
     private int width;
     private int[][] tiles;
-    public int highestBottomRow;
-    public int lowestTopRow;
     private SecureRandom random;
+    public float offset;
+    private Texture texture;
+    private Array<TextureRegion> textureRegions;
+
 
     public Board( int width, int height) {
         this.tiles = new int[width][height];
         this.width = width;
         this.height = height;
         random = new SecureRandom();
+        texture = new Texture("tools.png");
+        textureRegions = new Array<>();
+        for (int x = 0; x < texture.getWidth(); x += 64) {
+            textureRegions.add(new TextureRegion(texture, x, 0, 64, 64));
+        }
     }
 
     public int getWidth() {
@@ -30,8 +43,6 @@ public class Board {
     }
 
     public void create() {
-        highestBottomRow = 0;
-        lowestTopRow = tiles[0].length;
         for(int x=0;x<this.width; x++)
         {
             for(int y=0;y<this.height; y++)
@@ -40,7 +51,8 @@ public class Board {
             }
         }
 
-        this.addRows();
+        addRows();
+        addAdditionalRows();
     }
 
     public void addRows() {
@@ -48,12 +60,10 @@ public class Board {
         {
             this.setTile(i, 0, this.getRandomInt(1, 5));
         }
-        highestBottomRow++;
         for(int j=0;j<this.width; j++)
         {
             this.setTile(j, this.height-1, this.getRandomInt(1, 5));
         }
-        lowestTopRow--;
     }
 
     public void moveRows() {
@@ -81,11 +91,13 @@ public class Board {
     }
 
     public void setTile(int x, int y, int value) {
-        this.tiles[x][y] = value;
+        if (x >= 0 && x < tiles.length && y < tiles[x].length) {
+            tiles[x][y] = value;
+        }
     }
 
     public int getTile(int x, int y) {
-        return this.tiles[x][y];
+        return x >= 0 && x < tiles.length && y < tiles[x].length ? tiles[x][y] : 0;
     }
 
 // Check the board for three matches, make them disappear
@@ -154,4 +166,55 @@ public class Board {
         this.setTile(x,y, targetTileValue);
         this.setTile(x,py, sourceTileValue);
     }
+
+    public void swapTopRow(int x) {
+        int highestBottomTileY = getHighestBottomTileYAt(x);
+        int lowestTopTileY = getLowestTopTileYAt(x);
+        int source = getTile(x, highestBottomTileY);
+        int target = getTile(x, lowestTopTileY);
+        setTile(x, highestBottomTileY, source);
+        setTile(x, lowestTopTileY, target);
+        checkBoard();
+        compressBoard();
+    }
+
+    public void render(float delta, SpriteBatch spriteBatch) {
+        offset += delta * 4;
+        if (offset >= 64) {
+            addAdditionalRows();
+            do {
+                checkBoard();
+            } while (compressBoard());
+            offset = 0;
+        }
+        for(int x = 0; x < getWidth(); x++) {
+            for(int y = 0; y < getHeight(); y++) {
+                int i = getTile(x, y);
+                if (i != 0) {
+                    if (y < 5) {
+                        spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y - 1)) + offset);
+                    } else {
+                        spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y + 1)) - offset);
+                    }
+                }
+            }
+        }
+    }
+
+    public int getHighestBottomTileYAt(int x) {
+        int y = 5;
+        while (getTile(x, y) == 0 && y > 0) {
+            y--;
+        }
+        return y;
+    }
+
+    public int getLowestTopTileYAt(int x) {
+        int y = 5;
+        while (getTile(x, y) == 0 && y < 10) {
+            y++;
+        }
+        return y;
+    }
+
 }

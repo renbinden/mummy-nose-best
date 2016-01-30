@@ -3,6 +3,7 @@ package com.seventh_root.mummy_nose_best;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 
 public class PlayerManager {
@@ -20,6 +21,12 @@ public class PlayerManager {
     public void renderPlayers(float delta, SpriteBatch spriteBatch) {
         for (Player player : players) {
             player.render(delta, spriteBatch);
+        }
+    }
+
+    public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
+        for (Player player : players) {
+            player.renderShapes(delta, shapeRenderer);
         }
     }
 
