@@ -16,9 +16,11 @@ public class MainScreen extends ScreenAdapter {
     private Texture texture;
     private Board gameBoard;
     private java.util.Timer eventsTimer;
+    PlayerManager playerManager;
 
     public MainScreen() {
         spriteBatch = new SpriteBatch();
+        playerManager = new PlayerManager();
         gameBoard = new Board(6,10);
         gameBoard.create();
 
@@ -101,7 +103,6 @@ public class MainScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-
         spriteBatch.begin();
 
         // draw the board... refactor!!!!
@@ -115,6 +116,14 @@ public class MainScreen extends ScreenAdapter {
                 }
             }
         }
+        playerManager.renderPlayers(delta, spriteBatch);
         spriteBatch.end();
     }
+
+    @Override
+    public void dispose() {
+        spriteBatch.dispose();
+        playerManager.dispose();
+    }
+
 }
