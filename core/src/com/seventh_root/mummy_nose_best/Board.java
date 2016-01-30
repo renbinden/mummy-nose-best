@@ -1,14 +1,20 @@
 package com.seventh_root.mummy_nose_best;
 
+import java.security.SecureRandom;
+
 public class Board {
     private int height;
     private int width;
-    private int[] tiles;
+    private int[][] tiles;
+    public int highestBottomRow;
+    public int lowestTopRow;
+    private SecureRandom random;
 
     public Board( int width, int height) {
-        this.tiles = new int[width*height];
+        this.tiles = new int[width][height];
         this.width = width;
         this.height = height;
+        random = new SecureRandom();
     }
 
     public int getWidth() {
@@ -20,10 +26,12 @@ public class Board {
     }
 
     public int getRandomInt(int min, int max) {
-        return (int) (Math.floor(Math.random() * (max - min)) + min);
+        return min + random.nextInt((max + 1) - min);
     }
 
     public void create() {
+        highestBottomRow = 0;
+        lowestTopRow = tiles[0].length;
         for(int x=0;x<this.width; x++)
         {
             for(int y=0;y<this.height; y++)
@@ -40,11 +48,12 @@ public class Board {
         {
             this.setTile(i, 0, this.getRandomInt(1, 5));
         }
-
+        highestBottomRow++;
         for(int j=0;j<this.width; j++)
         {
             this.setTile(j, this.height-1, this.getRandomInt(1, 5));
         }
+        lowestTopRow--;
     }
 
     public void moveRows() {
@@ -72,11 +81,11 @@ public class Board {
     }
 
     public void setTile(int x, int y, int value) {
-        this.tiles[x+y*this.width] = value;
+        this.tiles[x][y] = value;
     }
 
     public int getTile(int x, int y) {
-        return this.tiles[x+y*this.width];
+        return this.tiles[x][y];
     }
 
 // Check the board for three matches, make them disappear
