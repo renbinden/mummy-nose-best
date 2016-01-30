@@ -46,6 +46,11 @@ public class Cursor {
         y += dy;
     }
 
+    public void moveTo(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public void dispose() {
         texture.dispose();
     }

@@ -14,15 +14,16 @@ public class MainScreen extends ScreenAdapter {
 
     private SpriteBatch spriteBatch;
     private Texture texture;
-    private Board gameBoard;
+    public Board gameBoard;
     private java.util.Timer eventsTimer;
     PlayerManager playerManager;
 
     public MainScreen() {
         spriteBatch = new SpriteBatch();
-        playerManager = new PlayerManager();
+
         gameBoard = new Board(6,10);
         gameBoard.create();
+        playerManager = new PlayerManager(gameBoard);
 
         texture = new Texture("tools.png");
 
