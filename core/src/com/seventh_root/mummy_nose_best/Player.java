@@ -38,7 +38,7 @@ public class Player {
         }
         if (controller.getButton(2)) {
             if (!rotateProcessed) {
-                board.rotateBlocks((int) cursor.x / 64, true);
+                board.rotateBlocks(((int) cursor.x + 32) / 64, true);
                 rotateProcessed = true;
             }
         } else {

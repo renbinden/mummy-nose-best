@@ -1,6 +1,7 @@
 package com.seventh_root.mummy_nose_best;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,6 +20,9 @@ public class Board {
     private Array<TextureRegion> textureRegions;
     public boolean lost;
     private Texture lose;
+    private Sound clearingBlocks;
+    private Sound lostSound;
+    private Sound movingUpSlow;
 
     public Board( int width, int height) {
         this.tiles = new int[width][height];
@@ -32,6 +36,9 @@ public class Board {
         }
         lost = false;
         lose = new Texture(Gdx.files.internal("lose.png"));
+        clearingBlocks = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/clearingblocks.wav"));
+        lostSound = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/Gameover.ogg"));
+        movingUpSlow = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/Movingupslow.ogg"));
     }
 
     public int getWidth() {
@@ -60,6 +67,7 @@ public class Board {
     }
 
     public void addRows() {
+        movingUpSlow.play();
         for(int i=0;i<this.width; i++)
         {
             this.setTile(i, 0, this.getRandomInt(1, 5));
@@ -113,9 +121,10 @@ public class Board {
                 int currentTile = this.getTile(x,y);
 
                 if(currentTile!=0 && this.getTile(x - 1,y) == currentTile && this.getTile(x + 1,y) == currentTile) {
-                    this.setTile(x-1,y,0);
-                    this.setTile(x,y,0);
-                    this.setTile(x+1,y,0);
+                    setTile(x-1,y,0);
+                    setTile(x,y,0);
+                    setTile(x+1,y,0);
+                    clearingBlocks.play();
                 }
             }
         }
@@ -188,6 +197,7 @@ public class Board {
             for (int x = 0; x < getWidth(); x++) {
                 if (getHighestBottomTileYAt(x) == getLowestTopTileYAt(x) && offset >= 64) {
                     lost = true;
+                    lostSound.play();
                 }
             }
             if (offset >= 64) {
