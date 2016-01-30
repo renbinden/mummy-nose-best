@@ -1,5 +1,6 @@
 package com.seventh_root.mummy_nose_best;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,7 +17,8 @@ public class Board {
     public float offset;
     private Texture texture;
     private Array<TextureRegion> textureRegions;
-
+    public boolean lost;
+    private Texture lose;
 
     public Board( int width, int height) {
         this.tiles = new int[width][height];
@@ -28,6 +30,8 @@ public class Board {
         for (int x = 0; x < texture.getWidth(); x += 64) {
             textureRegions.add(new TextureRegion(texture, x, 0, 64, 64));
         }
+        lost = false;
+        lose = new Texture(Gdx.files.internal("lose.png"));
     }
 
     public int getWidth() {
@@ -179,25 +183,34 @@ public class Board {
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
-        offset += delta * 4;
-        if (offset >= 64) {
-            addAdditionalRows();
-            do {
-                checkBoard();
-            } while (compressBoard());
-            offset = 0;
-        }
-        for(int x = 0; x < getWidth(); x++) {
-            for(int y = 0; y < getHeight(); y++) {
-                int i = getTile(x, y);
-                if (i != 0) {
-                    if (y < 5) {
-                        spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y - 1)) + offset);
-                    } else {
-                        spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y + 1)) - offset);
+        if (!lost) {
+            offset += delta * 4;
+            for (int x = 0; x < getWidth(); x++) {
+                if (getHighestBottomTileYAt(x) == getLowestTopTileYAt(x) && offset >= 64) {
+                    lost = true;
+                }
+            }
+            if (offset >= 64) {
+                addAdditionalRows();
+                do {
+                    checkBoard();
+                } while (compressBoard());
+                offset = 0;
+            }
+            for (int x = 0; x < getWidth(); x++) {
+                for (int y = 0; y < getHeight(); y++) {
+                    int i = getTile(x, y);
+                    if (i != 0) {
+                        if (y < 5) {
+                            spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y - 1)) + offset);
+                        } else {
+                            spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y + 1)) - offset);
+                        }
                     }
                 }
             }
+        } else {
+            spriteBatch.draw(lose, 0, 256);
         }
     }
 
