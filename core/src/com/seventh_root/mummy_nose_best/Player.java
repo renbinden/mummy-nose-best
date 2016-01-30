@@ -40,8 +40,8 @@ public class Player {
 
     public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(Color.RED);
-        int highestBottomTileY = board.getHighestBottomTileYAt((int) cursor.x / 64);
-        int lowestTopTileY = board.getLowestTopTileYAt((int) cursor.x / 64);
+        int highestBottomTileY = board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64);
+        int lowestTopTileY = board.getLowestTopTileYAt(((int) cursor.x + 32) / 64);
         shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
         shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
     }
