@@ -92,6 +92,13 @@ public class Board {
     }
 
     private void create() {
+        this.clear();
+
+        addRows();
+        addAdditionalRows();
+    }
+
+    public void clear() {
         for(int x=0;x<this.width; x++)
         {
             for(int y=0;y<this.height; y++)
@@ -99,41 +106,66 @@ public class Board {
                 this.setTile(x, y, 0);
             }
         }
-
-        addRows();
-        addAdditionalRows();
-        do {
-            checkBoard();
-        } while (compressBoard());
     }
 
     public void addRows() {
         movingUpSlow.play();
-        for(int i=0;i<this.width; i++)
-        {
-            this.setTile(i, 0, this.getRandomInt(1, 5));
+        addRow(0);
+        addRow(this.height-1);
+    }
+
+    public void addRow(int y) {
+        int lastTile = -1;
+        for (int i = 0; i < this.width; i++) {
+            int nextTile;
+            do {
+                nextTile = this.getRandomInt(1, 4);
+            } while (nextTile == lastTile);
+            this.setTile(i, y, nextTile);
+            lastTile = nextTile;
         }
-        for(int j=0;j<this.width; j++)
-        {
-            this.setTile(j, this.height-1, this.getRandomInt(1, 5));
+    }
+
+    // Returns true if the tile is attached to the top of the board.
+    public boolean isTileTop(int posX,int posY) {
+        if(posY == 0) {
+            return true;
         }
+
+        for(int y=posY;y>=0; y--)
+        {
+            if(this.getTile(posX,y) == 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void moveRows() {
         int x,y;
+
+        // Move any bottom tiles up
         for(x=0;x<this.width; x++)
         {
-            for(y=this.height/2;y>0; y--)
+            for(y=this.height-1;y>=0; y--)
             {
-                this.setTile(x, y, this.getTile(x,y-1));
+                int currentTile = this.getTile(x, y);
+                if(currentTile>0 && this.isTileTop(x,y)) {
+                    this.setTile(x, y + 1, currentTile);
+                }
             }
         }
 
+        // Move any top tiles down
         for(x=0;x<this.width; x++)
         {
-            for(y=this.height/2;y<9; y++)
+            for(y=0;y<this.height; y++)
             {
-                this.setTile(x, y, this.getTile(x,y+1));
+                int currentTile = this.getTile(x, y);
+                if(currentTile>0 && !this.isTileTop(x,y)) {
+                    this.setTile(x, y - 1, currentTile);
+                }
             }
         }
     }
@@ -153,8 +185,9 @@ public class Board {
         return x >= 0 && x < tiles.length && y < tiles[x].length ? tiles[x][y] : 0;
     }
 
-// Check the board for three matches, make them disappear
-    public void checkBoard() {
+    public boolean checkBoardAndCompress() {
+        boolean compressed = false;
+
         for(int y=0;y<this.height; y++)
         {
             for(int x=1;x<this.width - 1; x++)
@@ -162,59 +195,46 @@ public class Board {
                 int currentTile = this.getTile(x,y);
 
                 if(currentTile!=0 && this.getTile(x - 1,y) == currentTile && this.getTile(x + 1,y) == currentTile) {
-                    setTile(x-1,y,0);
-                    setTile(x,y,0);
-                    setTile(x+1,y,0);
+                    this.explodeTile(x-1,y);
+                    this.explodeTile(x,y);
+                    this.explodeTile(x+1,y);
                     clearingBlocks.play();
                     explosion.setPosition((x * 64) + this.x + 32, (y * 64) + 32);
                     explosion.reset();
                     explosion.start();
+
+                    compressed = true;
                 }
             }
         }
-    }
-
-    public boolean compressBoard() {
-
-        boolean anyTilesMoved = false;
-        boolean compressed = false;
-
-        do {
-            anyTilesMoved = false;
-            for (int y = this.height / 2; y > 0; y--) {
-                for (int x =0; x < this.width; x++) {
-                    int currentTile = this.getTile(x, y);
-
-                    if (currentTile != 0) {
-                        if(this.getTile(x, y-1)==0) {
-                            this.setTile(x, y-1, currentTile);
-                            this.setTile(x, y, 0);
-
-                            anyTilesMoved = true;
-                            compressed = true;
-                        }
-                    }
-                }
-            }
-
-            for (int y = this.height / 2; y < 9; y++) {
-                for (int x = 0; x < this.width; x++) {
-                    int currentTile = this.getTile(x, y);
-
-                    if (currentTile != 0) {
-                        if(this.getTile(x, y+1)==0) {
-                            this.setTile(x, y+1, currentTile);
-                            this.setTile(x, y, 0);
-
-                            anyTilesMoved = true;
-                            compressed = true;
-                        }
-                    }
-                }
-            }
-        } while (anyTilesMoved);
 
         return compressed;
+    }
+
+    public void explodeTile(int posX,int posY) {
+        boolean isTileTop = this.isTileTop(posX,posY);
+        this.setTile(posX,posY,0);
+        if(isTileTop) {
+            for (int y = posY; y < this.height; y++) {
+                int nextValue = this.getTile(posX, y+1);
+                if(nextValue != 0) {
+                    this.setTile(posX, y, nextValue);
+                    this.setTile(posX, y+1, 0);
+                } else {
+                    break;
+                }
+            }
+        } else {
+            for (int y = posY; y >= 0; y--) {
+                int nextValue = this.getTile(posX, y-1);
+                if(nextValue != 0) {
+                    this.setTile(posX, y, nextValue);
+                    this.setTile(posX, y-1, 0);
+                } else {
+                    break;
+                }
+            }
+        }
     }
 
     public void swapBlocks(int x, int y, int py) {
@@ -288,42 +308,51 @@ public class Board {
 
 
     public void rotateBlocks(int x, boolean topBlocks) {
-        int[] piecesList = new int[(this.height / 2) + 1];
+        int[] piecesList = new int[this.height];
 
         if(topBlocks) {
-            for (int y = 0; y < this.height / 2; y++) {
+            for (int y = 0; y < this.height; y++) {
                 int thisTileValue = this.getTile(x, y);
                 int nextTileValue = this.getTile(x, y + 1);
                 if (thisTileValue != 0) {
                     if (nextTileValue == 0) {
                         piecesList[0] = thisTileValue;
+                        break;
                     } else {
                         piecesList[y + 1] = thisTileValue;
                     }
                 }
             }
             // put the tiles in the correct location
-            for (int y = 0; y < this.height / 2; y++) {
-                this.setTile(x, y, piecesList[y]);
+            for (int y = 0; y < this.height; y++) {
+                int newTile = piecesList[y];
+                this.setTile(x, y, newTile);
+                if(newTile == 0) {
+                    break;
+                }
             }
         } else {
-            for (int y = this.height-1; y > this.height / 2; y--) {
+            for (int y = this.height-1; y > 0; y--) {
                 int thisTileValue = this.getTile(x, y);
                 int nextTileValue = this.getTile(x, y - 1);
                 if (thisTileValue != 0) {
                     if (nextTileValue == 0) {
                         piecesList[piecesList.length-1] = thisTileValue;
+                        break;
                     } else {
-                        piecesList[y - 1 - (this.height / 2)] = thisTileValue;
+                        piecesList[y - 1] = thisTileValue;
                     }
                 }
             }
             // put the tiles in the correct location
-            for (int y = this.height-1; y > this.height / 2; y--) {
-                this.setTile(x, y, piecesList[y - (this.height / 2)]);
+            for (int y = this.height-1; y > 0; y--) {
+                int newTile = piecesList[y];
+                this.setTile(x, y, newTile);
+                if(newTile == 0) {
+                    break;
+                }
             }
         }
-        checkBoard();
-        compressBoard();
+        checkBoardAndCompress();
     }
 }
