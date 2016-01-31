@@ -4,6 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 import static java.lang.Math.abs;
 
@@ -32,24 +33,66 @@ public class Player {
     public void render(float delta, SpriteBatch spriteBatch) {
         board.render(delta, spriteBatch);
         cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
-        if (abs(controller.getAxis(0)) >= 0.2F) {
-            cursor.move(controller.getAxis(0) * delta * 128, 0);
-        }
-        if (controller.getButton(0)) {
-            if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
-                board.swapTopRow(((int) cursor.x + 32) / 64);
-                actionProcessed = true;
+        if (SharedLibraryLoader.isLinux) {
+            if (abs(controller.getAxis(0)) >= 0.2F) {
+                cursor.move(controller.getAxis(0) * delta * 128, 0);
             }
-        } else {
-            actionProcessed = false;
-        }
-        if (controller.getButton(2)) {
-            if (!rotateProcessed) {
-                board.rotateBlocks(((int) cursor.x + 32) / 64, true);
-                rotateProcessed = true;
+            if (controller.getButton(0)) {
+                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
+                    board.swapTopRow(((int) cursor.x + 32) / 64);
+                    actionProcessed = true;
+                }
+            } else {
+                actionProcessed = false;
             }
-        } else {
-            rotateProcessed = false;
+            if (controller.getButton(2)) {
+                if (!rotateProcessed) {
+                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
+                    rotateProcessed = true;
+                }
+            } else {
+                rotateProcessed = false;
+            }
+        } else if (SharedLibraryLoader.isWindows) {
+            if (abs(controller.getAxis(1)) >= 0.2F) {
+                cursor.move(controller.getAxis(1) * delta * 128, 0);
+            }
+            if (controller.getButton(0)) {
+                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
+                    board.swapTopRow(((int) cursor.x + 32) / 64);
+                    actionProcessed = true;
+                }
+            } else {
+                actionProcessed = false;
+            }
+            if (controller.getButton(2)) {
+                if (!rotateProcessed) {
+                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
+                    rotateProcessed = true;
+                }
+            } else {
+                rotateProcessed = false;
+            }
+        } else if (SharedLibraryLoader.isMac) {
+            if (abs(controller.getAxis(2)) >= 0.2F) {
+                cursor.move(controller.getAxis(2) * delta * 128, 0);
+            }
+            if (controller.getButton(11)) {
+                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
+                    board.swapTopRow(((int) cursor.x + 32) / 64);
+                    actionProcessed = true;
+                }
+            } else {
+                actionProcessed = false;
+            }
+            if (controller.getButton(13)) {
+                if (!rotateProcessed) {
+                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
+                    rotateProcessed = true;
+                }
+            } else {
+                rotateProcessed = false;
+            }
         }
         cursor.render(delta, spriteBatch);
     }
