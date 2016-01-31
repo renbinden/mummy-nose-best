@@ -300,6 +300,7 @@ public class Board {
             spriteBatch.draw(lose, 0, 256);
             loseTimer += delta;
             if (loseTimer >= 5F) {
+                game.mainScreen = new MainScreen(game);
                 game.setScreen(game.splashScreen);
             }
         }
