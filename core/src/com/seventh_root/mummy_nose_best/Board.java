@@ -2,10 +2,12 @@ package com.seventh_root.mummy_nose_best;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 
 import java.security.SecureRandom;
@@ -366,6 +368,11 @@ public class Board {
         do {
             boardCheckChanges = checkBoardAndCompress();
         } while (boardCheckChanges);
+    }
+
+    public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.line(x, 320, 0, x + 384, 320, 0);
     }
 
     public void dispose() {
