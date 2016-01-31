@@ -31,10 +31,6 @@ public class SplashScreen extends ScreenAdapter {
         spriteBatch.end();
         for (Controller controller : Controllers.getControllers()) {
             if ((controller.getButton(7) && (SharedLibraryLoader.isWindows || SharedLibraryLoader.isLinux)) || (controller.getButton(4) && SharedLibraryLoader.isMac)) {
-                if (game.mainScreen != null) {
-                    game.mainScreen.dispose();
-                }
-                game.mainScreen = new MainScreen();
                 game.setScreen(game.mainScreen);
             }
         }

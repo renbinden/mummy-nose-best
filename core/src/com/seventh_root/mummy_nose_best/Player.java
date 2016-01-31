@@ -10,7 +10,6 @@ import static java.lang.Math.abs;
 
 public class Player {
 
-    public MummyNoseBest game;
     public MainScreen mainScreen;
     public Board board;
     public final int index;
@@ -20,8 +19,7 @@ public class Player {
     private boolean rotateProcessed; // Same as above, but for rotate
     private boolean rotateDownProcessed;
 
-    public Player(int index, Controller controller, MainScreen mainScreen, MummyNoseBest game) {
-        this.game = game;
+    public Player(int index, Controller controller, MainScreen mainScreen) {
         this.mainScreen = mainScreen;
         this.board = new Board.Builder()
                 .player(this)
