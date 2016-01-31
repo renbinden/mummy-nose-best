@@ -23,7 +23,6 @@ public class MainScreen extends ScreenAdapter {
 
         gameBoard = new Board(6,10);
         gameBoard.create();
-        compressBoard();
         playerManager = new PlayerManager(gameBoard);
 
         texture = new Texture("tools.png");
@@ -43,8 +42,6 @@ public class MainScreen extends ScreenAdapter {
             public void run()
             {
                 gameBoard.addAdditionalRows();
-
-                compressBoard();
             }
         };
 
@@ -55,8 +52,7 @@ public class MainScreen extends ScreenAdapter {
     public void compressBoard() {
         boolean madeCompression = false;
         do {
-            gameBoard.checkBoard();
-            madeCompression = gameBoard.compressBoard();
+            madeCompression = gameBoard.checkBoardAndCompress();
         }while(madeCompression);
     }
 
