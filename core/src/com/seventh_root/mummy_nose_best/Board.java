@@ -159,22 +159,18 @@ public class Board {
         // Move any bottom tiles up
         for(x=0;x<this.width; x++)
         {
-            for(y=this.height-1;y>=0; y--)
+            for(y=3;y>=0; y--)
             {
                 int currentTile = this.getTile(x, y);
-                if(currentTile>0 && this.isTileTop(x,y)) {
+                if(currentTile>0) {
                     this.setTile(x, y + 1, currentTile);
                 }
             }
-        }
 
-        // Move any top tiles down
-        for(x=0;x<this.width; x++)
-        {
-            for(y=0;y<this.height; y++)
+            for(y=6;y<this.height; y++)
             {
                 int currentTile = this.getTile(x, y);
-                if(currentTile>0 && !this.isTileTop(x,y)) {
+                if(currentTile>0) {
                     this.setTile(x, y - 1, currentTile);
                 }
             }
