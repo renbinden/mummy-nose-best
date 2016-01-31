@@ -35,16 +35,18 @@ public class Player {
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
-        board.render(delta, spriteBatch);
-        cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
-        if (SharedLibraryLoader.isLinux) {
-            control(controller.getAxis(0), delta, 2, 0, 3);
-        } else if (SharedLibraryLoader.isWindows) {
-            control(controller.getAxis(1), delta, 2, 0, 3);
-        } else if (SharedLibraryLoader.isMac) {
-            control(controller.getAxis(2), delta, 13, 11, 14);
+            board.render(delta, spriteBatch);
+        if  (!board.lost) {
+            cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
+            if (SharedLibraryLoader.isLinux) {
+                control(controller.getAxis(0), delta, 2, 0, 3);
+            } else if (SharedLibraryLoader.isWindows) {
+                control(controller.getAxis(1), delta, 2, 0, 3);
+            } else if (SharedLibraryLoader.isMac) {
+                control(controller.getAxis(2), delta, 13, 11, 14);
+            }
+            cursor.render(delta, spriteBatch);
         }
-        cursor.render(delta, spriteBatch);
     }
 
     public void control(float axis, float delta, int buttonA, int buttonX, int buttonY) {
@@ -78,27 +80,30 @@ public class Player {
     }
 
     public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
-        switch (index) {
-            case 0:
-                shapeRenderer.setColor(Color.RED);
-                break;
-            case 1:
-                shapeRenderer.setColor(Color.BLUE);
-                break;
-            case 2:
-                shapeRenderer.setColor(Color.GREEN);
-                break;
-            case 3:
-                shapeRenderer.setColor(Color.YELLOW);
-                break;
-            default:
-                shapeRenderer.setColor(Color.BLACK);
-                break;
+        if (!board.lost) {
+            switch (index) {
+                case 0:
+                    shapeRenderer.setColor(Color.RED);
+                    break;
+                case 1:
+                    shapeRenderer.setColor(Color.BLUE);
+                    break;
+                case 2:
+                    shapeRenderer.setColor(Color.GREEN);
+                    break;
+                case 3:
+                    shapeRenderer.setColor(Color.YELLOW);
+                    break;
+                default:
+                    shapeRenderer.setColor(Color.BLACK);
+                    break;
+            }
+            int highestBottomTileY = board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64);
+            int lowestTopTileY = board.getLowestTopTileYAt(((int) cursor.x + 32) / 64);
+            shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
+            shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
+            board.renderShapes(delta, shapeRenderer);
         }
-        int highestBottomTileY = board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64);
-        int lowestTopTileY = board.getLowestTopTileYAt(((int) cursor.x + 32) / 64);
-        shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
-        shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
     }
 
     public void dispose() {
