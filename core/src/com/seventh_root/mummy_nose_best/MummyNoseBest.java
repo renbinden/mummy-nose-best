@@ -4,17 +4,20 @@ import com.badlogic.gdx.Game;
 
 public class MummyNoseBest extends Game {
 
-    private MainScreen mainScreen;
+    public SplashScreen splashScreen;
+    public MainScreen mainScreen;
 	
 	@Override
 	public void create () {
+        splashScreen = new SplashScreen(this);
 		mainScreen = new MainScreen();
-        setScreen(mainScreen);
+        setScreen(splashScreen);
 	}
 
     @Override
     public void dispose() {
         super.dispose();
+        splashScreen.dispose();
         mainScreen.dispose();
     }
 }
