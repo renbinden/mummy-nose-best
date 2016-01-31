@@ -12,22 +12,12 @@ public class MainScreen extends ScreenAdapter {
 
     private SpriteBatch spriteBatch;
     private ShapeRenderer shapeRenderer;
-    public Board gameBoard;
     PlayerManager playerManager;
 
     public MainScreen() {
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        gameBoard = new Board(6, 10);
-        gameBoard.create();
-        compressBoard();
-        playerManager = new PlayerManager(gameBoard);
-    }
-
-    public void compressBoard() {
-        do {
-            gameBoard.checkBoard();
-        } while (gameBoard.compressBoard());
+        playerManager = new PlayerManager();
     }
 
     @Override
@@ -35,7 +25,6 @@ public class MainScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
-        gameBoard.render(delta, spriteBatch);
         playerManager.renderPlayers(delta, spriteBatch);
         spriteBatch.end();
         shapeRenderer.begin(Line);

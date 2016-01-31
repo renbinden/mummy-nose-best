@@ -11,6 +11,8 @@ import java.security.SecureRandom;
 
 public class Board {
 
+    public float x;
+    public float y;
     private int height;
     private int width;
     private int[][] tiles;
@@ -24,15 +26,47 @@ public class Board {
     private Sound lostSound;
     private Sound movingUpSlow;
 
-    public Board( int width, int height) {
+    public static class Builder {
+        private float x;
+        private float y;
+        private int width;
+        private int height;
+        public Builder width(int width) {
+            this.width = width;
+            return this;
+        }
+        public Builder height(int height) {
+            this.height = height;
+            return this;
+        }
+        public Board build() {
+            Board board = new Board(x, y, width, height);
+            board.create();
+            return board;
+        }
+
+        public Builder x(float x) {
+            this.x = x;
+            return this;
+        }
+
+        public Builder y(float y) {
+            this.y = y;
+            return this;
+        }
+    }
+
+    private Board(float x, float y, int width, int height) {
+        this.x = x;
+        this.y = y;
         this.tiles = new int[width][height];
         this.width = width;
         this.height = height;
         random = new SecureRandom();
         texture = new Texture("tools.png");
         textureRegions = new Array<>();
-        for (int x = 0; x < texture.getWidth(); x += 64) {
-            textureRegions.add(new TextureRegion(texture, x, 0, 64, 64));
+        for (int texX = 0; texX < texture.getWidth(); texX += 64) {
+            textureRegions.add(new TextureRegion(texture, texX, 0, 64, 64));
         }
         lost = false;
         lose = new Texture(Gdx.files.internal("lose.png"));
@@ -53,7 +87,7 @@ public class Board {
         return min + random.nextInt((max + 1) - min);
     }
 
-    public void create() {
+    private void create() {
         for(int x=0;x<this.width; x++)
         {
             for(int y=0;y<this.height; y++)
@@ -64,6 +98,9 @@ public class Board {
 
         addRows();
         addAdditionalRows();
+        do {
+            checkBoard();
+        } while (compressBoard());
     }
 
     public void addRows() {
@@ -212,9 +249,9 @@ public class Board {
                     int i = getTile(x, y);
                     if (i != 0) {
                         if (y < 5) {
-                            spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y - 1)) + offset);
+                            spriteBatch.draw(textureRegions.get(i), this.x + (64 * x), (64 * (y - 1)) + offset);
                         } else {
-                            spriteBatch.draw(textureRegions.get(i), 64 * x, (64 * (y + 1)) - offset);
+                            spriteBatch.draw(textureRegions.get(i), this.x + (64 * x), (64 * (y + 1)) - offset);
                         }
                     }
                 }
