@@ -28,6 +28,7 @@ public class Board {
     private Sound lostSound;
     private Sound movingUpSlow;
     private ParticleEffect explosion;
+    private float timeTillReturnToMain;
 
     public static class Builder {
         private Player player;
@@ -267,12 +268,16 @@ public class Board {
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
+        if (timeTillReturnToMain < 0) {
+            player.game.setScreen(player.game.mainScreen);
+        }
         if (!lost) {
             offset += delta * 4;
             for (int x = 0; x < getWidth(); x++) {
                 if (getHighestBottomTileYAt(x) == 4 && getLowestTopTileYAt(x) == 5 && offset >= 64) {
                     lost = true;
                     lostSound.play();
+                    timeTillReturnToMain = 5.0F;
                 }
             }
             if (offset >= 64) {
@@ -292,7 +297,8 @@ public class Board {
                 }
             }
         } else {
-            spriteBatch.draw(lose, 0, 256);
+            spriteBatch.draw(lose, this.x, 256);
+            timeTillReturnToMain -= delta;
         }
         explosion.update(delta);
         explosion.draw(spriteBatch);
