@@ -10,7 +10,8 @@ import static java.lang.Math.abs;
 
 public class Player {
 
-    private Board board;
+    public MainScreen mainScreen;
+    public Board board;
     public final int index;
     public final Controller controller;
     public final Cursor cursor;
@@ -18,8 +19,10 @@ public class Player {
     private boolean rotateProcessed; // Same as above, but for rotate
     private boolean rotateDownProcessed;
 
-    public Player(int index, Controller controller) {
+    public Player(int index, Controller controller, MainScreen mainScreen) {
+        this.mainScreen = mainScreen;
         this.board = new Board.Builder()
+                .player(this)
                 .x(index * 768)
                 .y(0)
                 .width(6)
