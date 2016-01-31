@@ -16,14 +16,21 @@ public class Player {
     private boolean actionProcessed; // Whether the swap has been processed.
     private boolean rotateProcessed; // Same as above, but for rotate
 
-    public Player(Board board, int index, Controller controller) {
-        this.board = board;
+    public Player(int index, Controller controller) {
+        this.board = new Board.Builder()
+                .x(index * 768)
+                .y(0)
+                .width(6)
+                .height(10)
+                .build();
         this.index = index;
         this.controller = controller;
         this.cursor = new Cursor(this);
+        cursor.xOffset = index * 768;
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
+        board.render(delta, spriteBatch);
         cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
         if (abs(controller.getAxis(0)) >= 0.2F) {
             cursor.move(controller.getAxis(0) * delta * 128, 0);
@@ -48,11 +55,27 @@ public class Player {
     }
 
     public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(Color.RED);
+        switch (index) {
+            case 0:
+                shapeRenderer.setColor(Color.RED);
+                break;
+            case 1:
+                shapeRenderer.setColor(Color.BLUE);
+                break;
+            case 2:
+                shapeRenderer.setColor(Color.GREEN);
+                break;
+            case 3:
+                shapeRenderer.setColor(Color.YELLOW);
+                break;
+            default:
+                shapeRenderer.setColor(Color.BLACK);
+                break;
+        }
         int highestBottomTileY = board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64);
         int lowestTopTileY = board.getLowestTopTileYAt(((int) cursor.x + 32) / 64);
-        shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
-        shapeRenderer.box((((int) cursor.x + 32) / 64) * 64, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
+        shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (highestBottomTileY - 1) * 64 + board.offset, 0, 64, 64, 0);
+        shapeRenderer.box(((((int) cursor.x + 32) / 64) * 64) + cursor.xOffset, (lowestTopTileY + 1) * 64 - board.offset, 0, 64, 64, 0);
     }
 
     public void dispose() {

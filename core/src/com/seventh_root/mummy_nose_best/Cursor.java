@@ -12,6 +12,7 @@ public class Cursor {
     private Animation animation;
     private float stateTime;
     public float x;
+    public float xOffset;
     public float y;
     private Texture texture;
 
@@ -38,7 +39,7 @@ public class Cursor {
 
     public void render(float delta, SpriteBatch spriteBatch) {
         stateTime += delta;
-        spriteBatch.draw(animation.getKeyFrame(stateTime), x, y);
+        spriteBatch.draw(animation.getKeyFrame(stateTime), x + xOffset, y);
     }
 
     public void move(float dx, float dy) {

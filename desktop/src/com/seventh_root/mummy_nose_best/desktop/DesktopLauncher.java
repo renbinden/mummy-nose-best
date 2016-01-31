@@ -7,7 +7,7 @@ import com.seventh_root.mummy_nose_best.MummyNoseBest;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = 800;
+		config.width = 1152;
 		config.height = 640;
 		new LwjglApplication(new MummyNoseBest(), config);
 	}
