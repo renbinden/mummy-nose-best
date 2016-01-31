@@ -251,8 +251,10 @@ public class Board {
         int target = getTile(x, lowestTopTileY);
         setTile(x, lowestTopTileY, source);
         setTile(x, highestBottomTileY, target);
-        checkBoard();
-        compressBoard();
+        boolean boardCheckChanges = false;
+        do {
+            boardCheckChanges = checkBoardAndCompress();
+        } while (boardCheckChanges);
     }
 
     public void render(float delta, SpriteBatch spriteBatch) {
@@ -266,9 +268,6 @@ public class Board {
             }
             if (offset >= 64) {
                 addAdditionalRows();
-                do {
-                    checkBoard();
-                } while (compressBoard());
                 offset = 0;
             }
             for (int x = 0; x < getWidth(); x++) {
@@ -353,6 +352,10 @@ public class Board {
                 }
             }
         }
-        checkBoardAndCompress();
+
+        boolean boardCheckChanges = false;
+        do {
+            boardCheckChanges = checkBoardAndCompress();
+        } while (boardCheckChanges);
     }
 }

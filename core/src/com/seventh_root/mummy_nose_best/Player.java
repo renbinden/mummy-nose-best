@@ -16,6 +16,7 @@ public class Player {
     public final Cursor cursor;
     private boolean actionProcessed; // Whether the swap has been processed.
     private boolean rotateProcessed; // Same as above, but for rotate
+    private boolean rotateDownProcessed;
 
     public Player(int index, Controller controller) {
         this.board = new Board.Builder()
@@ -34,67 +35,43 @@ public class Player {
         board.render(delta, spriteBatch);
         cursor.moveTo(cursor.x, ((board.getHighestBottomTileYAt(((int) cursor.x + 32) / 64) - 1) * 64) + board.offset);
         if (SharedLibraryLoader.isLinux) {
-            if (abs(controller.getAxis(0)) >= 0.2F) {
-                cursor.move(controller.getAxis(0) * delta * 128, 0);
-            }
-            if (controller.getButton(0)) {
-                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
-                    board.swapTopRow(((int) cursor.x + 32) / 64);
-                    actionProcessed = true;
-                }
-            } else {
-                actionProcessed = false;
-            }
-            if (controller.getButton(2)) {
-                if (!rotateProcessed) {
-                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
-                    rotateProcessed = true;
-                }
-            } else {
-                rotateProcessed = false;
-            }
+            control(controller.getAxis(0), delta, 2, 0, 3);
         } else if (SharedLibraryLoader.isWindows) {
-            if (abs(controller.getAxis(1)) >= 0.2F) {
-                cursor.move(controller.getAxis(1) * delta * 128, 0);
-            }
-            if (controller.getButton(0)) {
-                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
-                    board.swapTopRow(((int) cursor.x + 32) / 64);
-                    actionProcessed = true;
-                }
-            } else {
-                actionProcessed = false;
-            }
-            if (controller.getButton(2)) {
-                if (!rotateProcessed) {
-                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
-                    rotateProcessed = true;
-                }
-            } else {
-                rotateProcessed = false;
-            }
+            control(controller.getAxis(1), delta, 2, 0, 3);
         } else if (SharedLibraryLoader.isMac) {
-            if (abs(controller.getAxis(2)) >= 0.2F) {
-                cursor.move(controller.getAxis(2) * delta * 128, 0);
-            }
-            if (controller.getButton(11)) {
-                if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
-                    board.swapTopRow(((int) cursor.x + 32) / 64);
-                    actionProcessed = true;
-                }
-            } else {
-                actionProcessed = false;
-            }
-            if (controller.getButton(13)) {
-                if (!rotateProcessed) {
-                    board.rotateBlocks(((int) cursor.x + 32) / 64, true);
-                    rotateProcessed = true;
-                }
-            } else {
-                rotateProcessed = false;
-            }
+            control(controller.getAxis(2), delta, 13, 11, 14);
         }
         cursor.render(delta, spriteBatch);
+    }
+
+    public void control(float axis, float delta, int buttonA, int buttonX, int buttonY) {
+        if (abs(axis) >= 0.2F) {
+            cursor.move(axis * delta * 128, 0);
+        }
+        if (controller.getButton(buttonA)) {
+            if (!actionProcessed) { // Only process the swap if the action button wasn't held down last tick
+                board.swapTopRow(((int) cursor.x + 32) / 64);
+                actionProcessed = true;
+            }
+        } else {
+            actionProcessed = false;
+        }
+        if (controller.getButton(buttonX)) {
+            if (!rotateProcessed) {
+                board.rotateBlocks(((int) cursor.x + 32) / 64, true);
+                rotateProcessed = true;
+            }
+        } else {
+            rotateProcessed = false;
+        }
+        if (controller.getButton(buttonY)) {
+            if (!rotateDownProcessed) {
+                board.rotateBlocks(((int) cursor.x + 32) / 64, false);
+                rotateDownProcessed = true;
+            }
+        } else {
+            rotateDownProcessed = false;
+        }
     }
 
     public void renderShapes(float delta, ShapeRenderer shapeRenderer) {
