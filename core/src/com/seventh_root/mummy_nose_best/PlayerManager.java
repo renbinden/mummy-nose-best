@@ -10,11 +10,11 @@ public class PlayerManager {
 
     public Array<Player> players;
 
-    public PlayerManager() {
+    public PlayerManager(MainScreen mainScreen) {
         players = new Array<>();
         int index = 0;
         for (Controller controller : Controllers.getControllers()) {
-            players.add(new Player(index++, controller));
+            players.add(new Player(index++, controller, mainScreen));
         }
     }
 

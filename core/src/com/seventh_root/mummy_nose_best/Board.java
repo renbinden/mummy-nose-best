@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 
 public class Board {
 
+    private Player player;
     public float x;
     public float y;
     private int height;
@@ -29,10 +30,17 @@ public class Board {
     private ParticleEffect explosion;
 
     public static class Builder {
+        private Player player;
         private float x;
         private float y;
         private int width;
         private int height;
+
+        public Builder player(Player player) {
+            this.player = player;
+            return this;
+        }
+
         public Builder width(int width) {
             this.width = width;
             return this;
@@ -43,6 +51,7 @@ public class Board {
         }
         public Board build() {
             Board board = new Board(x, y, width, height);
+            board.player = player;
             board.create();
             return board;
         }
@@ -202,7 +211,7 @@ public class Board {
                     explosion.setPosition((x * 64) + this.x + 32, (y * 64) + 32);
                     explosion.reset();
                     explosion.start();
-
+                    player.mainScreen.openEyes();
                     compressed = true;
                 }
             }
