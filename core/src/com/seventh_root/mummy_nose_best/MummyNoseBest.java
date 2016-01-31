@@ -10,7 +10,7 @@ public class MummyNoseBest extends Game {
 	@Override
 	public void create () {
         splashScreen = new SplashScreen(this);
-		mainScreen = new MainScreen();
+		mainScreen = new MainScreen(this);
         setScreen(splashScreen);
 	}
 

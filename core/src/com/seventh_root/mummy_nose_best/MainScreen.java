@@ -18,10 +18,10 @@ public class MainScreen extends ScreenAdapter {
     private Texture mummyClosed;
     private float timeTillCloseEyes;
 
-    public MainScreen() {
+    public MainScreen(MummyNoseBest game) {
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        playerManager = new PlayerManager(this);
+        playerManager = new PlayerManager(this, game);
         mummyOpen = new Texture(Gdx.files.internal("mummy_open.png"));
         mummyClosed = new Texture(Gdx.files.internal("mummy_closed.png"));
     }

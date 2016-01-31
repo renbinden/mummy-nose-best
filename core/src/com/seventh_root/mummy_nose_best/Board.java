@@ -30,6 +30,8 @@ public class Board {
     private Sound lostSound;
     private Sound movingUpSlow;
     private ParticleEffect explosion;
+    private float loseTimer;
+    private MummyNoseBest game;
 
     public static class Builder {
         private Player player;
@@ -54,6 +56,7 @@ public class Board {
         public Board build() {
             Board board = new Board(x, y, width, height);
             board.player = player;
+            board.game = player.game;
             board.create();
             return board;
         }
@@ -295,6 +298,10 @@ public class Board {
             }
         } else {
             spriteBatch.draw(lose, 0, 256);
+            loseTimer += delta;
+            if (loseTimer >= 5F) {
+                game.setScreen(game.splashScreen);
+            }
         }
         explosion.update(delta);
         explosion.draw(spriteBatch);

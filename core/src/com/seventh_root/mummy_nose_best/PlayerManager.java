@@ -10,11 +10,11 @@ public class PlayerManager {
 
     public Array<Player> players;
 
-    public PlayerManager(MainScreen mainScreen) {
+    public PlayerManager(MainScreen mainScreen, MummyNoseBest game) {
         players = new Array<>();
         int index = 0;
         for (Controller controller : Controllers.getControllers()) {
-            players.add(new Player(index++, controller, mainScreen));
+            players.add(new Player(index++, controller, mainScreen, game));
         }
     }
 
