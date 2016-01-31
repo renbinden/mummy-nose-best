@@ -3,6 +3,7 @@ package com.seventh_root.mummy_nose_best;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -25,6 +26,7 @@ public class Board {
     private Sound clearingBlocks;
     private Sound lostSound;
     private Sound movingUpSlow;
+    private ParticleEffect explosion;
 
     public static class Builder {
         private float x;
@@ -73,6 +75,8 @@ public class Board {
         clearingBlocks = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/clearingblocks.wav"));
         lostSound = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/Gameover.ogg"));
         movingUpSlow = Gdx.audio.newSound(Gdx.files.internal("AudioEffects/Movingupslow.ogg"));
+        explosion = new ParticleEffect();
+        explosion.load(Gdx.files.internal("explode.p"), Gdx.files.internal("explode"));
     }
 
     public int getWidth() {
@@ -162,6 +166,9 @@ public class Board {
                     setTile(x,y,0);
                     setTile(x+1,y,0);
                     clearingBlocks.play();
+                    explosion.setPosition((x * 64) + this.x + 32, (y * 64) + 32);
+                    explosion.reset();
+                    explosion.start();
                 }
             }
         }
@@ -259,6 +266,8 @@ public class Board {
         } else {
             spriteBatch.draw(lose, 0, 256);
         }
+        explosion.update(delta);
+        explosion.draw(spriteBatch);
     }
 
     public int getHighestBottomTileYAt(int x) {
