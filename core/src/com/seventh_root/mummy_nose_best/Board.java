@@ -358,4 +358,13 @@ public class Board {
             boardCheckChanges = checkBoardAndCompress();
         } while (boardCheckChanges);
     }
+
+    public void dispose() {
+        texture.dispose();
+        lose.dispose();
+        clearingBlocks.dispose();
+        lostSound.dispose();
+        movingUpSlow.dispose();
+        explosion.dispose();
+    }
 }

@@ -36,6 +36,7 @@ public class MainScreen extends ScreenAdapter {
     public void dispose() {
         spriteBatch.dispose();
         playerManager.dispose();
+        shapeRenderer.dispose();
     }
 
 }

@@ -99,6 +99,7 @@ public class Player {
     }
 
     public void dispose() {
+        board.dispose();
         cursor.dispose();
     }
 
